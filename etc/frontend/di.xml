@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <!--
+        Hook on the parent class Magento\Framework\View\Element\Html\Links
+        rather than the specific Magento\Customer\Block\Account\Navigation
+        subclass: this way the plugin still works on stores (and Hyvä themes)
+        that swap out the navigation block class via layout XML, as long as
+        the new class still extends Html\Links. The plugin guards by checking
+        the block's name-in-layout so it doesn't touch unrelated lists.
+
+        Frontend-scoped because the customer-navigation block only renders
+        on the storefront; admin scope doesn't need the plugin.
+    -->
+    <type name="Magento\Framework\View\Element\Html\Links">
+        <plugin name="etechflow_account_links_manager_filter"
+                type="ETechFlow\AccountLinksManager\Plugin\NavigationPlugin"
+                sortOrder="100"/>
+    </type>
+</config>

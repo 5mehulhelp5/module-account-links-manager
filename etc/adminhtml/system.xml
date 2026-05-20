@@ -1,0 +1,147 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="etechflow" translate="label" sortOrder="400">
+            <label>eTechFlow</label>
+        </tab>
+        <section id="etechflow_accountlinks"
+                 translate="label"
+                 type="text"
+                 sortOrder="160"
+                 showInDefault="1"
+                 showInWebsite="1"
+                 showInStore="1">
+            <label>Customer Dashboard Links Manager</label>
+            <tab>etechflow</tab>
+            <resource>ETechFlow_AccountLinksManager::config</resource>
+
+            <group id="license"
+                   translate="label"
+                   type="text"
+                   sortOrder="5"
+                   showInDefault="1"
+                   showInWebsite="0"
+                   showInStore="0">
+                <label>License</label>
+                <field id="production_environment"
+                       translate="label comment tooltip"
+                       type="select"
+                       sortOrder="5"
+                       showInDefault="1"
+                       showInWebsite="0"
+                       showInStore="0">
+                    <label>Production Environment</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <tooltip>Yes for live sites, No for dev/staging on non-standard domains.</tooltip>
+                    <comment><![CDATA[
+                        <strong>Yes</strong> = this is your live site. The module checks the licence
+                        key against the current domain. If invalid, the module silently disables itself.<br/>
+                        <strong>No</strong> = this is dev/staging. The module runs at full features
+                        without a licence — use this on non-standard dev domains the auto-detector misses.<br/>
+                        Default: Yes.
+                    ]]></comment>
+                </field>
+                <field id="license_key"
+                       translate="label comment tooltip"
+                       type="text"
+                       sortOrder="10"
+                       showInDefault="1"
+                       showInWebsite="0"
+                       showInStore="0">
+                    <label>License Key</label>
+                    <tooltip>Paste your purchase-email key here. Bound to the production domain.</tooltip>
+                    <comment><![CDATA[
+                        Paste the key from your purchase email. Tied to your live website's address.<br/>
+                        Test or staging sites don't need a key — the module detects them automatically.<br/>
+                        Bought the eTechFlow bundle? Enter the bundle key in any module's License section
+                        and it activates every eTechFlow module at once.
+                    ]]></comment>
+                </field>
+            </group>
+
+            <group id="general"
+                   translate="label"
+                   type="text"
+                   sortOrder="10"
+                   showInDefault="1"
+                   showInWebsite="1"
+                   showInStore="1">
+                <label>General Settings</label>
+
+                <field id="enabled"
+                       translate="label comment tooltip"
+                       type="select"
+                       sortOrder="10"
+                       showInDefault="1"
+                       showInWebsite="1"
+                       showInStore="1">
+                    <label>Enable Module</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <tooltip>Turn the link filter on or off without uninstalling.</tooltip>
+                    <comment><![CDATA[
+                        <strong>Yes</strong> = the module filters the customer My Account sidebar
+                        based on the rules below.<br/>
+                        <strong>No</strong> (default) = the module is dormant; the sidebar shows
+                        every link as Magento ships it.
+                    ]]></comment>
+                </field>
+
+                <field id="mode"
+                       translate="label comment"
+                       type="select"
+                       sortOrder="20"
+                       showInDefault="1"
+                       showInWebsite="1"
+                       showInStore="1">
+                    <label>Action</label>
+                    <source_model>ETechFlow\AccountLinksManager\Model\Source\Mode</source_model>
+                    <comment><![CDATA[
+                        <strong>Hide selected links</strong>: every link picked below is hidden from the customer dashboard sidebar.<br/>
+                        <strong>Show only selected links</strong>: only the picked links remain visible; everything else is hidden.
+                    ]]></comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+
+                <field id="hidden_links"
+                       translate="label comment"
+                       type="multiselect"
+                       sortOrder="30"
+                       showInDefault="1"
+                       showInWebsite="1"
+                       showInStore="1">
+                    <label>Links</label>
+                    <source_model>ETechFlow\AccountLinksManager\Model\Source\AvailableLinks</source_model>
+                    <comment><![CDATA[
+                        Pick which customer "My Account" sidebar links to manage. The list shows
+                        standard Magento + Adobe Commerce link names; for custom-extension links,
+                        list their block names in the field below.
+                    ]]></comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+
+                <field id="extra_block_names"
+                       translate="label comment"
+                       type="textarea"
+                       sortOrder="40"
+                       showInDefault="1"
+                       showInWebsite="1"
+                       showInStore="1">
+                    <label>Extra block names (one per line)</label>
+                    <comment><![CDATA[
+                        Add layout block names not in the Links list above (one per line). Example:<br/>
+                        <code>customer-account-navigation-magefan-blog-comments-link</code><br/>
+                        <code>my-custom-extension-link</code>
+                    ]]></comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>
