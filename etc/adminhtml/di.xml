@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Config\Model\Config">
+        <plugin name="etechflow_alm_block_config_save_without_license"
+                type="ETechFlow\AccountLinksManager\Plugin\Adminhtml\Config\BlockSaveWithoutLicense"
+                sortOrder="10"/>
+    </type>
+</config>

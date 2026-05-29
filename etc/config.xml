@@ -1,18 +1,29 @@
-<?xml version="1.0"?>
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
-    <default>
-        <etechflow_accountlinks>
-            <license>
-                <license_key></license_key>
-                <production_environment>1</production_environment>
-            </license>
-            <general>
-                <enabled>0</enabled>
-                <mode>hide_selected</mode>
-                <hidden_links></hidden_links>
-                <extra_block_names></extra_block_names>
-            </general>
-        </etechflow_accountlinks>
-    </default>
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <etechflow_accountlinks>
+            <license>
+                <license_key></license_key>
+                <production_environment>1</production_environment>
+                <portal_url></portal_url>
+                <portal_api_url></portal_api_url>
+            </license>
+            <general>
+                <enabled>0</enabled>
+                <mode>hide_selected</mode>
+                <hidden_links></hidden_links>
+                <extra_block_names></extra_block_names>
+            </general>
+        
+                <payment>
+                    <stripe_secret_key></stripe_secret_key>
+                    <stripe_publishable_key></stripe_publishable_key>
+                    <stripe_price_solo></stripe_price_solo>
+                    <stripe_price_growth></stripe_price_growth>
+                    <stripe_price_business></stripe_price_business>
+                    <stripe_price_allchannels></stripe_price_allchannels>
+                </payment>
+            </etechflow_accountlinks>
+    </default>
 </config>

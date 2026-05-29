@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="ETechFlow_AccountLinksManager::license_gate"
+             title="Account Links Manager"
+             module="ETechFlow_AccountLinksManager"
+             sortOrder="160"
+             parent="Magento_Backend::stores_settings"
+             action="etechflow_accountlinks/license/index"
+             resource="ETechFlow_AccountLinksManager::config"/>
+    </menu>
+</config>

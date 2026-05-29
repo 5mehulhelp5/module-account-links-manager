@@ -45,6 +45,16 @@ class Config
     }
 
     /**
+     * Raw feature toggle — no license check.
+     * Use in frontend plugins where the admin has already configured the feature;
+     * license enforcement is handled by the admin gate page.
+     */
+    public function isFeatureEnabled(?int $storeId = null): bool
+    {
+        return $this->scopeConfig->isSetFlag(self::XML_ENABLED, ScopeInterface::SCOPE_STORE, $storeId);
+    }
+
+    /**
      * @param int|null $storeId
      * @return string Either Mode::HIDE_SELECTED or Mode::SHOW_ONLY.
      */

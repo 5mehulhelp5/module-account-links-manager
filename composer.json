@@ -2,7 +2,7 @@
     "name": "etechflow/module-account-links-manager",
     "description": "Hide unwanted links from the customer My Account sidebar without editing any templates or layout XML. Multi-select admin config, Hyvä + Magento Open Source + Adobe Commerce compatible.",
     "type": "magento2-module",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "license": "proprietary",
     "authors": [
         {
