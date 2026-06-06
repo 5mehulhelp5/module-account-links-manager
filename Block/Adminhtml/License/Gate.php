@@ -46,6 +46,24 @@ class Gate extends Template
         return rtrim($v, '/');
     }
 
+    /**
+     * Portal /license/plans endpoint for this module + domain. The portal admin
+     * decides recurring vs one-time, so the gate renders the matching cards.
+     */
+    public function getPlansUrl(): string
+    {
+        $api = trim((string) $this->_scopeConfig->getValue(self::PORTAL_API_URL_PATH));
+        if ($api === '') {
+            $api = trim((string) $this->_scopeConfig->getValue(self::PORTAL_URL_PATH));
+        }
+        $api = rtrim($api, '/');
+        if ($api === '') {
+            return '';
+        }
+        return $api . '/license/plans?module=account-links-manager&domain='
+            . urlencode($this->licenseValidator->getCurrentHost());
+    }
+
     public function getSelectPlanUrl(string $plan = ''): string
     {
         $base = $this->getPortalBrowserUrl();

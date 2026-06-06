@@ -9,6 +9,7 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\Controller\ResultInterface;
 use Magento\Framework\HTTP\Client\Curl;
+use Magento\Framework\HTTP\Client\CurlFactory;
 use Magento\Store\Model\StoreManagerInterface;
 use ETechFlow\AccountLinksManager\Model\LicenseValidator;
 
@@ -21,6 +22,7 @@ class CreateSession extends Action
         private readonly JsonFactory $jsonFactory,
         private readonly ScopeConfigInterface $scopeConfig,
         private readonly Curl $curl,
+        private readonly CurlFactory $curlFactory,
         private readonly LicenseValidator $licenseValidator,
         private readonly StoreManagerInterface $storeManager
     ) {
@@ -111,17 +113,66 @@ class CreateSession extends Action
 
     private function getPlanInfo(string $plan): ?array
     {
-        $priceId = trim((string) $this->scopeConfig->getValue('etechflow_accountlinks/payment/stripe_price_' . $plan));
+        // Optional: a configured Stripe Price ID gives a true Stripe subscription.
+        $priceId = trim((string) $this->scopeConfig->getValue('etechflow_accountlinks/payment/stripe_price_' . str_replace('-', '_', $plan)));
         if ($priceId !== '') {
             return ['price_id' => $priceId, 'mode' => 'subscription', 'label' => ucfirst($plan) . ' Plan'];
         }
-        $catalog = [
-            'solo'         => ['amount' => 3900,  'currency' => 'gbp', 'label' => 'Solo Plan',         'mode' => 'payment'],
-            'growth'       => ['amount' => 7900,  'currency' => 'gbp', 'label' => 'Growth Plan',       'mode' => 'payment'],
-            'business'     => ['amount' => 14900, 'currency' => 'gbp', 'label' => 'Business Plan',     'mode' => 'payment'],
-            'all-channels' => ['amount' => 24900, 'currency' => 'gbp', 'label' => 'All-Channels Plan', 'mode' => 'payment'],
-        ];
-        return $catalog[$plan] ?? null;
+        // Otherwise price AUTHORITATIVELY from the portal — reflects the admin's
+        // recurring/one-time choice (incl. the alm_onetime plan).
+        $card = $this->fetchPlanFromPortal($plan);
+        if ($card !== null) {
+            return ['amount' => $card['amount'], 'currency' => 'usd', 'label' => $card['name'], 'mode' => 'payment'];
+        }
+        return null;
+    }
+
+    /**
+     * Look up a plan's amount (cents) + name from the portal /license/plans.
+     *
+     * @return array{amount:int, name:string}|null
+     */
+    private function fetchPlanFromPortal(string $slug): ?array
+    {
+        $api = trim((string) $this->scopeConfig->getValue('etechflow_accountlinks/license/portal_api_url'));
+        if ($api === '') {
+            $api = trim((string) $this->scopeConfig->getValue('etechflow_accountlinks/license/portal_url'));
+        }
+        $api = rtrim($api, '/');
+        if ($api === '') {
+            return null;
+        }
+        $url = $api . '/license/plans?module=account-links-manager&domain='
+            . urlencode($this->licenseValidator->getCurrentHost());
+        try {
+            $curl = $this->curlFactory->create();
+            $curl->setOption(CURLOPT_SSL_VERIFYPEER, false);
+            $curl->setTimeout(10);
+            $curl->addHeader('Accept', 'application/json');
+            $curl->addHeader('ngrok-skip-browser-warning', '1');
+            $curl->get($url);
+            $status = (int) $curl->getStatus();
+            $body   = (string) $curl->getBody();
+        } catch (\Throwable) {
+            return null;
+        }
+        if ($status !== 200 || $body === '') {
+            return null;
+        }
+        $data = json_decode($body, true);
+        if (!is_array($data) || empty($data['plans']) || !is_array($data['plans'])) {
+            return null;
+        }
+        foreach ($data['plans'] as $card) {
+            if (($card['slug'] ?? '') === $slug) {
+                $amount = (int) ($card['amount_cents'] ?? 0);
+                if ($amount <= 0) {
+                    return null;
+                }
+                return ['amount' => $amount, 'name' => (string) ($card['name'] ?? 'Account Links Manager')];
+            }
+        }
+        return null;
     }
 
     private function callStripe(

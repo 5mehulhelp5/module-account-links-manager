@@ -5,6 +5,7 @@ $domain        = $block->getCurrentDomain();
 $configuredKey = $block->getConfiguredKey();
 $configUrl     = $block->getConfigUrl();
 $createSessionUrl = $block->getUrl('etechflow_accountlinks/license/createsession');
+$plansUrl         = $block->getPlansUrl();
 ?>
 <style>
 *{box-sizing:border-box}
@@ -81,65 +82,9 @@ $createSessionUrl = $block->getUrl('etechflow_accountlinks/license/createsession
     <div class="etf-warn">⚠ The license key you entered is invalid for this domain. Please subscribe to get a valid key.</div>
     <?php endif; ?>
 
-    <!-- Plans grid -->
-    <div class="etf-plans">
-
-      <!-- Solo -->
-      <div class="etf-plan-card">
-        <p class="etf-plan-name">Solo</p>
-        <p class="etf-plan-price">£39<span>/yr</span></p>
-        <p class="etf-plan-desc">Perfect for a single store</p>
-        <ul class="etf-plan-features">
-          <li>1 domain</li><li>Account Links Manager</li><li>Email support</li>
-        </ul>
-        <button class="etf-btn-sub" onclick="etfSelectPlan('solo','Solo','£39/year')">Subscribe →</button>
-      </div>
-
-      <!-- Growth -->
-      <div class="etf-plan-card">
-        <p class="etf-plan-name">Growth</p>
-        <p class="etf-plan-price">£79<span>/yr</span></p>
-        <p class="etf-plan-desc">Growing stores</p>
-        <ul class="etf-plan-features">
-          <li>1 domain</li><li>Account Links Manager</li><li>Priority support</li>
-        </ul>
-        <button class="etf-btn-sub" onclick="etfSelectPlan('growth','Growth','£79/year')">Subscribe →</button>
-      </div>
-
-      <!-- Business (popular) -->
-      <div class="etf-plan-card popular">
-        <span class="etf-popular-badge">Most Popular</span>
-        <p class="etf-plan-name">Business</p>
-        <p class="etf-plan-price">£149<span>/yr</span></p>
-        <p class="etf-plan-desc">Multi-channel merchants</p>
-        <ul class="etf-plan-features">
-          <li>1 domain</li><li>All eTechFlow modules</li><li>Priority support</li>
-        </ul>
-        <button class="etf-btn-sub" onclick="etfSelectPlan('business','Business','£149/year')">Subscribe →</button>
-      </div>
-
-      <!-- All-Channels -->
-      <div class="etf-plan-card">
-        <p class="etf-plan-name">All-Channels</p>
-        <p class="etf-plan-price">£249<span>/yr</span></p>
-        <p class="etf-plan-desc">Full suite, all channels</p>
-        <ul class="etf-plan-features">
-          <li>Up to 3 domains</li><li>All eTechFlow modules</li><li>Slack support</li>
-        </ul>
-        <button class="etf-btn-sub" onclick="etfSelectPlan('all-channels','All-Channels','£249/year')">Subscribe →</button>
-      </div>
-
-      <!-- Enterprise -->
-      <div class="etf-plan-card enterprise">
-        <p class="etf-plan-name">Enterprise</p>
-        <p class="etf-plan-price" style="font-size:1.3rem">Custom</p>
-        <p class="etf-plan-desc">Tailored for your business</p>
-        <ul class="etf-plan-features">
-          <li>Unlimited domains</li><li>Custom development</li><li>Dedicated support</li>
-        </ul>
-        <button class="etf-btn-contact" onclick="window.open('mailto:hello@etechflow.com?subject=Enterprise+Enquiry&body=Domain: <?= $block->escapeHtml($domain) ?>')">Contact Us →</button>
-      </div>
-
+    <!-- Plans grid (rendered from the portal: recurring or one-time) -->
+    <div class="etf-plans" id="etf-plans">
+      <div style="grid-column:1/-1;text-align:center;color:rgba(255,255,255,.5);font-size:.9rem;padding:20px;">Loading plans…</div>
     </div><!-- /.etf-plans -->
 
     <!-- Inline checkout form -->
@@ -175,6 +120,54 @@ $createSessionUrl = $block->getUrl('etechflow_accountlinks/license/createsession
 <script>
 var _etfPlan = '';
 var _etfCreateUrl = '<?= $block->escapeJs($createSessionUrl) ?>';
+var _etfPlansUrl  = '<?= $block->escapeJs($plansUrl) ?>';
+
+function etfEsc(s){ var d=document.createElement('div'); d.textContent=s==null?'':String(s); return d.innerHTML; }
+function etfFeatList(text){
+    if(!text) return '<li>Hide any My Account links</li><li>Multi-store</li>';
+    var t = String(text).replace(/^[^—-]*[—-]\s*/, '');
+    var parts = t.split(/,\s*/).filter(function(x){return x.trim();}).slice(0,4);
+    if(!parts.length) return '<li>Hide any My Account links</li>';
+    return parts.map(function(p){return '<li>'+etfEsc(p.trim())+'</li>';}).join('');
+}
+function etfRenderPlans(data){
+    var wrap = document.getElementById('etf-plans');
+    var plans = (data && data.plans) || [];
+    if(!plans.length){ etfPlansError(); return; }
+    var oneTime = (data.mode === 'one_time');
+    var html = '';
+    plans.forEach(function(p){
+        var popular = (!oneTime && p.period === 'monthly');
+        var title = oneTime ? (p.name || 'Lifetime License')
+                   : ({week:'Weekly',month:'Monthly',year:'Yearly'}[p.period_label] || etfEsc(p.name));
+        var unit  = oneTime ? ' once' : ('/' + etfEsc(p.period_label));
+        var desc  = oneTime ? 'Pay once — never expires.'
+                   : ({week:'Short-term or trying it out',month:'The standard plan',year:'Best value — 2 months free'}[p.period_label] || '');
+        var priceDisp = '$' + p.price + (oneTime ? ' once' : '/' + p.period_label);
+        html += '<div class="etf-plan-card'+(popular?' popular':'')+'">'
+              + (popular ? '<span class="etf-popular-badge">Most Popular</span>' : '')
+              + (oneTime ? '<span class="etf-popular-badge">Lifetime</span>' : '')
+              + '<p class="etf-plan-name">'+etfEsc(title)+'</p>'
+              + '<p class="etf-plan-price">$'+etfEsc(p.price)+'<span>'+unit+'</span></p>'
+              + '<p class="etf-plan-desc">'+etfEsc(desc)+'</p>'
+              + '<ul class="etf-plan-features">'+etfFeatList(p.features)+'</ul>'
+              + '<button class="etf-btn-sub" data-slug="'+etfEsc(p.slug)+'" data-name="'+etfEsc(title)+'" data-price="'+etfEsc(priceDisp)+'">Subscribe &rarr;</button>'
+              + '</div>';
+    });
+    wrap.innerHTML = html;
+    wrap.querySelectorAll('.etf-btn-sub').forEach(function(b){
+        b.addEventListener('click', function(){ etfSelectPlan(b.dataset.slug, b.dataset.name, b.dataset.price); });
+    });
+}
+function etfPlansError(){
+    document.getElementById('etf-plans').innerHTML =
+      '<div style="grid-column:1/-1;text-align:center;color:rgba(255,255,255,.5);font-size:.85rem;padding:18px;">Plans are temporarily unavailable. Use the “enter license key” link below.</div>';
+}
+(function(){
+    if(!_etfPlansUrl){ etfPlansError(); return; }
+    fetch(_etfPlansUrl, { headers:{ 'Accept':'application/json','ngrok-skip-browser-warning':'1' } })
+      .then(function(r){ return r.json(); }).then(etfRenderPlans).catch(etfPlansError);
+})();
 
 function etfSelectPlan(plan, name, price) {
     _etfPlan = plan;
