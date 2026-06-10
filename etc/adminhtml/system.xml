@@ -27,16 +27,6 @@
                     ]]></comment>
                 </field>
 
-                <field id="production_environment" translate="label comment tooltip" type="select"
-                       sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>Production Environment</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <tooltip>Yes = enforce license. No = bypass all checks (dev mode).</tooltip>
-                    <comment><![CDATA[
-                        <strong>Yes</strong> = live site; license key is required.<br/>
-                        <strong>No</strong> = dev/staging; module runs freely without a key.
-                    ]]></comment>
-                </field>
 
                 <field id="portal_url" translate="label comment tooltip" type="text"
                        sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0">
