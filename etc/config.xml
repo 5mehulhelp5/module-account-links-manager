@@ -16,14 +16,6 @@
                 <extra_block_names></extra_block_names>
             </general>
         
-                <payment>
-                    <stripe_secret_key></stripe_secret_key>
-                    <stripe_publishable_key></stripe_publishable_key>
-                    <stripe_price_solo></stripe_price_solo>
-                    <stripe_price_growth></stripe_price_growth>
-                    <stripe_price_business></stripe_price_business>
-                    <stripe_price_allchannels></stripe_price_allchannels>
-                </payment>
             </etechflow_accountlinks>
     </default>
 </config>
