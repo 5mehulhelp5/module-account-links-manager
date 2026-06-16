@@ -90,7 +90,7 @@ $plansUrl         = $block->getPlansUrl();
     <!-- Inline checkout form -->
     <div class="etf-checkout" id="etf-checkout">
       <h2>Subscribe to <span id="etf-plan-name-label">Plan</span></h2>
-      <p class="etf-checkout-sub">Price: <strong id="etf-plan-price-label" style="color:#fff"></strong> &nbsp;·&nbsp; Secure payment via Stripe</p>
+      <p class="etf-checkout-sub">Price: <strong id="etf-plan-price-label" style="color:#fff"></strong> &nbsp;·&nbsp; Secure card payment</p>
 
       <div class="etf-form-row">
         <div class="etf-field">
@@ -107,7 +107,7 @@ $plansUrl         = $block->getPlansUrl();
         <button class="etf-btn-pay" id="etf-pay-btn" onclick="etfProceedToPayment()">Proceed to Payment →</button>
         <button class="etf-btn-back" onclick="etfBack()">← Choose Different Plan</button>
       </div>
-      <p class="etf-checkout-note">🔒 You will be redirected to Stripe's secure checkout. After payment, your license key is automatically activated in Magento.</p>
+      <p class="etf-checkout-note">🔒 You will be redirected to our secure checkout. After payment, your license key is automatically activated in Magento.</p>
     </div>
 
     <div class="etf-already">
@@ -225,7 +225,7 @@ async function etfProceedToPayment() {
             btn.textContent = orig;
             btn.disabled = false;
         } else if (data.url) {
-            btn.textContent = 'Redirecting to Stripe…';
+            btn.textContent = 'Redirecting to checkout…';
             window.location.href = data.url;
         } else {
             alert('Unexpected response. Please try again.');
