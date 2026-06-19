@@ -3,6 +3,10 @@
       xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
         <referenceContainer name="content">
+            <block class="Magento\Backend\Block\Template"
+                   name="etechflow_accountlinks_update_notice"
+                   template="ETechFlow_AccountLinksManager::update-notice.phtml"
+                   cacheable="false"/>
             <block class="ETechFlow\AccountLinksManager\Block\Adminhtml\License\Gate"
                    name="etechflow_accountlinks_license_gate"
                    template="ETechFlow_AccountLinksManager::license/gate.phtml"/>
