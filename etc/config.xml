@@ -7,7 +7,7 @@
                 <license_key></license_key>
                 <production_environment>1</production_environment>
                 <portal_url></portal_url>
-                <portal_api_url></portal_api_url>
+                <portal_api_url>https://license-service.etechflow.com</portal_api_url>
             </license>
             <general>
                 <enabled>0</enabled>
