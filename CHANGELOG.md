@@ -4,6 +4,31 @@ All notable changes to this module. Adheres to [Semantic Versioning](https://sem
 
 ---
 
+## [1.2.0] — 2026-07-03 — Security: portal-only licensing (removes forgeable key path)
+
+Closes a licensing bypass. Previous versions shipped the HMAC signing secret
+inside `LicenseValidator` (`SECRET_FRAGMENTS`/`BUNDLE_SECRET_FRAGMENTS`) and
+validated a locally-computed key against it, so anyone with the module source
+could compute a valid key for their own domain and run the module unlicensed.
+A second bypass let the client-settable "locally issued" 48-hour grace
+(`issued_key`/`issued_domain`/`stripe_session`/`issued_at`) activate the module
+whenever the portal was unreachable — all fields the customer controls.
+
+### Changed (security)
+
+- **Validation is now portal-only.** `isValid()` honours a key only when the
+  ETechFlow portal confirms it. The module ships no signing secret.
+- Removed `computeKey()`, `computeBundleKey()`, `SECRET_FRAGMENTS`,
+  `BUNDLE_SECRET_FRAGMENTS`, and the `isLocallyIssuedKey()` client grace.
+- Offline grace now derives solely from a cached genuine portal success and is
+  keyed to host+key, so it cannot be fabricated or reused across domains.
+- `isProductionEnvironment()` is hardcoded on; the `production_environment=No`
+  toggle can no longer bypass licensing.
+- Rewrote the unit suite as a portal-only suite, including a hard test that a
+  forged `SP-` key with attacker-controlled config and no portal is rejected.
+
+---
+
 ## [1.1.0] — 2026-05-29
 
 ### Security & Licensing
