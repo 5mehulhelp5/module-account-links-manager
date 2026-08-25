@@ -4,6 +4,24 @@ All notable changes to this module. Adheres to [Semantic Versioning](https://sem
 
 ---
 
+## [Unreleased] — Fixed (Adobe QA follow-up)
+
+### Fixed
+- **Links now hide reliably across all Magento editions.** The navigation filter
+  matched customer-sidebar links by their internal layout **block name** only,
+  using guessed names that were wrong for Adobe Commerce and Vault links — so
+  **Stored Payment Methods, Store Credit, Reward Points, Gift Card, Gift
+  Registries, Order by SKU and My Invitations** could not be hidden (e.g. Vault's
+  real block is `customer-account-navigation-my-credit-cards-link`, not the
+  guessed `...stored-payment-methods-link`). The plugin now matches each link by
+  its **visible label OR its block name** (case-insensitive, hyphen/space
+  tolerant), so a merchant hides a link by the text they actually see.
+- **"Links" multiselect** now lists links by their visible label (and works for
+  Vault + Adobe Commerce links); the **"Extra links"** textarea now accepts either
+  the visible link text or the block name, with in-page help explaining both.
+
+---
+
 ## [1.2.0] — 2026-07-03 — Security: portal-only licensing (removes forgeable key path)
 
 Closes a licensing bypass. Previous versions shipped the HMAC signing secret

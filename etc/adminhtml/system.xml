@@ -81,13 +81,30 @@
                 <field id="hidden_links" translate="label comment" type="multiselect"
                        sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Links</label>
-                    <source_model>ETechFlow\AccountLinksManager\Model\Source\AvailableLinks</source_model>
+                    <source_model>ETechFlow\AccountLinksManager\Model\Source\AvailableLinks</source_model>
+                    <comment><![CDATA[
+                        Select the "My Account" sidebar links to manage. Each item is
+                        matched by the <strong>text shown in the sidebar</strong>, so it
+                        works for Magento Open Source, Adobe Commerce and Vault links
+                        (Stored Payment Methods, Store Credit, Reward Points, Gift Card,
+                        Gift Registries, Order by SKU, My Invitations, etc.).
+                    ]]></comment>
                     <depends><field id="enabled">1</field></depends>
                 </field>
 
                 <field id="extra_block_names" translate="label comment" type="textarea"
                        sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Extra block names (one per line)</label>
+                    <label>Extra links (one per line)</label>
+                    <comment><![CDATA[
+                        For any custom or third-party link not listed above, enter one per
+                        line. You can use either:<br/>
+                        &bull; the <strong>visible link text</strong> as it appears in the
+                        sidebar, e.g. <em>My Downloads</em> or <em>Store Credit</em>; or<br/>
+                        &bull; the link's layout <strong>block name</strong>, e.g.
+                        <em>customer-account-navigation-my-credit-cards-link</em>.<br/>
+                        Matching is case-insensitive and ignores spaces/hyphens. These are
+                        combined with the selections above.
+                    ]]></comment>
                     <depends><field id="enabled">1</field></depends>
                 </field>
             </group>
